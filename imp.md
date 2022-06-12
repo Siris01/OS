@@ -60,3 +60,77 @@ char *str = (char*) shmat(shmid, (void*)0, 0);
 ## Destroy
 shmdt(str);
 shmctl(shmid, IPC_RMID, NULL);
+
+# Semaphores
+
+## Producer
+sem_wait( & (shmptr -> empty));
+sem_wait( & (shmptr -> mutex));
+shmptr -> buffer[shmptr -> count++] = rand() % 100;
+sem_post( & (shmptr -> mutex));
+sem_post( & (shmptr -> full));
+
+## Cosumer
+sem_wait( & (shmptr -> full));
+sem_wait( & (shmptr -> mutex));
+printf("Consumed %d\n", shmptr -> buffer[0]);
+sem_post( & (shmptr -> mutex));
+sem_post( & (shmptr -> empty));
+
+# Deadlock
+
+## Safety
+System Model Deadlock Characterization Methods for Handling Deadlocks Deadlock Prevention Deadlock Detection
+Safety Algorithm
+1 Let Work and Finish be vectors of length m and n,
+respectively. Initialize:
+Work = Available
+Finish [i] = false for i = 0, 1, , n - 1
+2 Find an i such that both:
+(a) Finish [i] = false
+(b) Needi ≤ Work
+If no such i exists, go to step 4
+3 Work = Work + Allocationi
+Finish[i] = true
+go to step 2
+4 If Finish [i] == true for all i, then the system is in a safe
+state
+
+## Resource req
+System Model Deadlock Characterization Methods for Handling Deadlocks Deadlock Prevention Deadlock Detection
+Resource-Request Algorithm for Process Pi
+Requesti = request vector for process Pi . If Requesti [j ] = k
+then process Pi wants k instances of resource type Rj
+1 If Requesti ≤ Needi go to step 2. Otherwise, raise error
+condition, since process has exceeded its maximum claim
+2 If Requesti ≤ Available, go to step 3. Otherwise Pi must
+wait, since resources are not available
+3 Pretend to allocate requested resources to Pi by modifying
+the state as follows:
+Available = AvailableRequesti ;
+Allocationi = Allocationi + Requesti ;
+Needi = Needi Requesti ;
+4 If safe → the resources are allocated to Pi
+5 If unsafe → Pi must wait, and the old resource-allocation
+state is restored
+
+## Detection
+
+Let Work and Finish be vectors of length m and n,
+respectively Initialize: (a) Work = Available
+(b) For i = 1,2, , n, if Allocationi 6 = 0, then
+Finish[i] = false; otherwise, Finish[i] = true
+2 Find an index i such that both:
+(a) Finish[i] == false
+(b) Requesti ≤ Work
+If no such i exists, go to step 4
+Unit-II Lecture -5
+Deadlock
+System Model Deadlock Characterization Methods for Handling Deadlocks Deadlock Prevention Deadlock Detection
+Detection Algorithm
+3 Work = Work + Allocationi
+Finish[i] = true
+go to step 2
+4 If Finish[i] == false, for some i, 1 ≤ i ≤ n, then the system
+is in deadlock state. Moreover, if Finish[i] == false, then Pi
+is deadlocked
