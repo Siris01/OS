@@ -35,15 +35,16 @@ int cmp_burst_time(const void * p, const void * q) {
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 #include <fcntl.h> 
 #include <semaphore.h>
 #include <pthread.h>
+#include <sys/stat.h>
 #include <sys/sem.h>
 #include <sys/wait.h>
 #include <sys/errno.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 # Clearing shared mem
 ipcs -m | grep `whoami` | awk '{ print $2 }' | xargs -n1 ipcrm -m
