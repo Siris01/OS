@@ -1,0 +1,7 @@
+.vscode
+**/*.pdf
+**/*.doc
+**/*.docx
+**/*.out
+**/*.o
+**/*.json
