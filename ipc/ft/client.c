@@ -4,33 +4,35 @@
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <fcntl.h> 
-  
-void download(char* path) {
-    key_t key = ftok("shmfile", 65);  
-    int shmid = shmget(key, 1024, 0666|IPC_CREAT);
+#include <fcntl.h>
 
-    char *str = (char*) shmat(shmid, (void*)0, 0);
+void download(char *path)
+{
+    int shmid = shmget(69, 1024, 0666 | IPC_CREAT);
 
-    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);  
-    if (fd == -1) { 
-        printf("Error while opening file!"); 
-        exit(1); 
+    char *str = (char *)shmat(shmid, (void *)0, 0);
+
+    int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    if (fd == -1)
+    {
+        printf("Error while opening file!");
+        exit(1);
     }
-    
-    write(fd, str, strlen(str)); 
+
+    write(fd, str, strlen(str));
 
     printf("[CLIENT] File contents: %s\n", str);
     printf("[CLIENT] File saved in %s\n", path);
-    
+
     close(fd);
     shmdt(str);
-    shmctl(shmid, IPC_RMID, NULL);
+    shmctl(shmid, 0, NULL);
 }
 
-int main() {
+int main()
+{
 
-    char* path = (char*) malloc(sizeof(char) * 100);
+    char *path = (char *)malloc(sizeof(char) * 100);
     printf("[MAIN] Enter path where the file is to be downloaded: ");
     scanf("%s", path);
 

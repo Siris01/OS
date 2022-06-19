@@ -11,7 +11,7 @@
 #include <sys/types.h>
 
 extern int errno;
-#define SIZE 10 /* size of the shared buffer*/
+#define SIZE 10   /* size of the shared buffer*/
 #define VARSIZE 1 /* size of shared variable=1byte*/
 #define INPUTSIZE 20
 #define SHMPERM 0666 /* shared memory permissions */
@@ -21,74 +21,75 @@ char *buff, *input_string;
 sem_t *empty, *full, *mutex;
 
 // Producer function
-void produce() {
+void produce()
+{
     printf("Producer running...\n");
     int i = 0, p = 0;
 
-    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | IPC_EXCL | SHMPERM);
-    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
+    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | 0666);
+    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
 
-    buff = shmat(segid, (char * ) 0, 0);
-    empty = shmat(empty_id, (char * ) 0, 0);
-    full = shmat(full_id, (char * ) 0, 0);
-    mutex = shmat(mutex_id, (char * ) 0, 0);
+    buff = shmat(segid, (char *)0, 0);
+    empty = shmat(empty_id, (char *)0, 0);
+    full = shmat(full_id, (char *)0, 0);
+    mutex = shmat(mutex_id, (char *)0, 0);
 
-    while (1) {
-        if (i != 0) {
+    while (1)
+    {
+        if (i != 0)
+        {
             sem_wait(empty);
             sem_wait(mutex);
         }
 
-        if (i == strlen(input_string) + 2) {
-             printf("Producer: Buffer is full.\n");
+        if (i == strlen(input_string) + 2)
+        {
+            printf("Producer: Buffer is full.\n");
             sem_post(mutex);
             sem_post(full);
-           
+
             break;
         }
 
         buff[p] = input_string[i];
         p = (p + 1) % SIZE;
         i++;
-        
+
         sem_post(mutex);
         sem_post(full);
     }
 }
 
 // Consumer function
-void* consume() {
+void *consume()
+{
     printf("Consumer running...\n");
     int c = 0, i = 0;
 
-    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | IPC_EXCL | SHMPERM);
-    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
+    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | 0666);
+    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
 
-    buff = shmat(segid, (char * ) 0, 0);
-    empty = shmat(empty_id, (char * ) 0, 0);
-    full = shmat(full_id, (char * ) 0, 0);
-    mutex = shmat(mutex_id, (char * ) 0, 0);
+    buff = shmat(segid, (char *)0, 0);
+    empty = shmat(empty_id, (char *)0, 0);
+    full = shmat(full_id, (char *)0, 0);
+    mutex = shmat(mutex_id, (char *)0, 0);
 
-    while (1) {
+    while (1)
+    {
         sem_wait(full);
         sem_wait(mutex);
 
-        if (i == strlen(input_string) + 2) {
+        if (i == strlen(input_string) + 2)
+        {
             sem_post(mutex);
             sem_post(empty);
             break;
         }
-        
+
         printf("%c\n", buff[c]);
         c = (c + 1) % SIZE;
         i++;
@@ -96,28 +97,26 @@ void* consume() {
         sem_post(mutex);
         sem_post(empty);
     }
-} 
+}
 
 //-------- Main function ---------
-int main() {
+int main()
+{
     int i = 0;
     pid_t temp_pid;
     pthread_t id;
 
-    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | IPC_EXCL | SHMPERM);
-    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
-    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL |
-        SHMPERM);
+    segid = shmget(IPC_PRIVATE, SIZE, IPC_CREAT | 0666);
+    empty_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    full_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
+    mutex_id = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0666);
 
-    buff = shmat(segid, (char * ) 0, 0);
-    empty = shmat(empty_id, (char * ) 0, 0);
-    full = shmat(full_id, (char * ) 0, 0);
-    mutex = shmat(mutex_id, (char * ) 0, 0);
+    buff = shmat(segid, (char *)0, 0);
+    empty = shmat(empty_id, (char *)0, 0);
+    full = shmat(full_id, (char *)0, 0);
+    mutex = shmat(mutex_id, (char *)0, 0);
 
-    input_string = (char *) malloc(INPUTSIZE * sizeof(char));
+    input_string = (char *)malloc(INPUTSIZE * sizeof(char));
 
     sem_init(empty, 1, SIZE);
     sem_init(full, 1, 0);
@@ -125,15 +124,16 @@ int main() {
 
     printf("\n Main Process Started \n");
     printf("\n Enter the input string (20 characters MAX) : ");
-    scanf("%s", input_string);
+    scanf("%[^\n]", input_string);
     printf("Input string is : %s\n", input_string);
 
     int ret = pthread_create(&id, NULL, &consume, NULL);
-    if (ret != 0) {
+    if (ret != 0)
+    {
         printf("\n Error in creating thread");
         exit(1);
     }
-    
+
     produce();
 
     shmdt(buff);
