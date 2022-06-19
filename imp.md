@@ -156,3 +156,9 @@ go to step 2
 4 If Finish[i] == false, for some i, 1 ≤ i ≤ n, then the system
 is in deadlock state. Moreover, if Finish[i] == false, then Pi
 is deadlocked
+
+
+----
+
+Normal (checking safe seq) -> work & finish
+Detection -> work & finish & 2d req matrix
